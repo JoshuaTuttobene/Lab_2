@@ -24,7 +24,7 @@ if __name__ == "__main__":
     encoder.zero()
     previous_reading = 0
     while True:
-        current_reading = encoder.read(previous_reading)
+        current_reading = encoder.read()
         print(current_reading)
-        previous_reading = current_reading
+        
         

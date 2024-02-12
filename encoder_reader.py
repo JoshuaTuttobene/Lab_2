@@ -18,20 +18,24 @@ class Encoder:
         self.ch2 = timer.channel(2, pyb.Timer.ENC_AB, pin=pin_B)
         print ("Initializing")
 
-    def read (self, previous_reading):
+    def read (self):
         """!
         This method reads the current value of the encoder
         """
-        current_reading = self.timer.counter()
-        delta = current_reading - previous_reading
+        current_position = self.timer.counter()
+        delta = current_position - self.previous_reading
+        self.previous_reading = current_position
         
-        if delta >= 2**16//2:
-            delta = -2**16
-                
-        elif delta <= -2**16//2:
-            delta = 2**16
-        current_reading += delta    
-        return current_reading
+        # Underflow
+        if delta >= (2**16)//2:
+            delta -= 2**16
+        
+        # Overflow
+        elif delta <= -(2**16)//2:
+            delta += 2**16
+            
+        self.current_location += delta
+        return self.current_location
         
     def zero (self):
         """!
@@ -39,4 +43,6 @@ class Encoder:
         """
         print("Zeroed")
         self.timer.counter(0)
+        self.current_location = 0
+        self.previous_reading = 0
     
